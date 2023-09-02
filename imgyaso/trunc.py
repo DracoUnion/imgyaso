@@ -19,7 +19,11 @@ def trunc(img, l=4):
     idx = np.argmin(dist, axis=2)
     img = colors[idx]
     
+    if bytes_type:
+        img = bytes(cv2.imencode('.png', img, IMWRITE_PNG_FLAG)[1])
     return img
+    
+trunc_bts = trunc
 
 def main():
     fname = sys.argv[1]
