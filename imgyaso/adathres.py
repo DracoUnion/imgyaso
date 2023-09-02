@@ -29,7 +29,7 @@ def adathres(img, win=9, beta=0.9):
     img = np.where(img < means * beta, 0, 255)
     
     if bytes_type:
-        img = byte(cv2.imencode('.png', img, IMWRITE_PNG_BW_FLAG)[1])
+        img = bytes(cv2.imencode('.png', img, IMWRITE_PNG_BW_FLAG)[1])
     return img
     
 adathres_bts = adathres
