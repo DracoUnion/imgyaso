@@ -7,6 +7,8 @@ from PIL import Image, ImageFile
 from io import BytesIO
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+IMWRITE_PNG_FLAG = [cv2.IMWRITE_PNG_COMPRESSION, 9]
+IMWRITE_PNG_BW_FLAG = [cv2.IMWRITE_PNG_BILEVEL, 1]
 
 headers = {
     'png': b'\x89PNG',
@@ -32,3 +34,7 @@ def conv2png(img):
     bio = BytesIO()
     img.convert('RGBA').save(bio, 'png')
     return bio.getvalue()
+
+def ensure_grayscale(img):
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) \
+           if img.ndim == 3 else img

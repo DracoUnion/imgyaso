@@ -161,7 +161,7 @@ def noise_bts(img):
 '''
 
 def noise(img):
-    assert img.ndim == 2
+    img = ensure_grayscale(img)
 
     r = np.random.randint(255, size=img.shape)
     img = np.where(r < img, 255, 0)
