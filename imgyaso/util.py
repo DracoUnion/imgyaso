@@ -5,6 +5,7 @@ import os
 from os import path
 from PIL import Image, ImageFile
 from io import BytesIO
+import numpy as np
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 

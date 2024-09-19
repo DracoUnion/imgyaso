@@ -4,6 +4,7 @@ import libimagequant as liq
 from PIL import Image, ImageFile
 from io import BytesIO
 from .util import *
+import numpy as np
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
