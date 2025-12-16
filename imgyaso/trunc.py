@@ -3,23 +3,15 @@ import cv2
 import numpy as np
 from .util import *
 
-def trunc_bts(img, l=4):
-    if not is_img_data(img): return img
-    img = conv2png(img)
-    img = np.frombuffer(img, np.uint8)
-    img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
-    if img is None: return None
-    img = trunc(img, l).astype(np.uint8)
-    img = cv2.imencode(
-        '.png', img, 
-        [cv2.IMWRITE_PNG_COMPRESSION, 9]
-    )[1]
-    return bytes(img)
-
-
 def trunc(img, l=4):
-    assert img.ndim == 2
-    
+    bytes_type = isinstance(img, bytes)
+    if bytes_type:
+        if not is_img_data(img): return img
+        img = cv2.imdecode(np.frombuffer(img, np.uint8), 
+                           cv2.IMREAD_GRAYSCALE)
+        if img is None: return None
+    img = ensure_grayscale(img)
+       
     colors = np.linspace(0, 255, l).astype(int)
     
     img_3d = np.expand_dims(img, 2)
@@ -27,7 +19,11 @@ def trunc(img, l=4):
     idx = np.argmin(dist, axis=2)
     img = colors[idx]
     
+    if bytes_type:
+        img = bytes(cv2.imencode('.png', img, IMWRITE_PNG_FLAG)[1])
     return img
+    
+trunc_bts = trunc
 
 def main():
     fname = sys.argv[1]

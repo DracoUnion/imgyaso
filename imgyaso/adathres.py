@@ -7,20 +7,15 @@ from os import path
 import sys
 from .util import *
 
-def adathres_bts(img, win=9, beta=0.9):
-    if not is_img_data(img): return img
-    img = conv2png(img)
-    img = np.frombuffer(img, np.uint8)
-    img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
-    if img is None: return None
-    img = adathres(img, win, beta).astype(np.uint8)
-    img = cv2.imencode(
-        '.png', img, 
-        [cv2.IMWRITE_PNG_BILEVEL, 1]
-    )[1]
-    return bytes(img)
-
 def adathres(img, win=9, beta=0.9):
+    bytes_type = isinstance(img, bytes)
+    if bytes_type:
+        if not is_img_data(img): return img
+        img = cv2.imdecode(np.frombuffer(img, np.uint8), 
+                           cv2.IMREAD_GRAYSCALE)
+        if img is None: return None
+    img = ensure_grayscale(img)
+   
     if win % 2 == 0: win = win - 1
     # 边界的均值有点麻烦
     # 这里分别计算和和邻居数再相除
@@ -32,7 +27,12 @@ def adathres(img, win=9, beta=0.9):
     # 但是相邻背景颜色相差不大
     # 所以乘个系数把它们过滤掉
     img = np.where(img < means * beta, 0, 255)
+    
+    if bytes_type:
+        img = bytes(cv2.imencode('.png', img, IMWRITE_PNG_BW_FLAG)[1])
     return img
+    
+adathres_bts = adathres
     
 def main():
     fname = sys.argv[1]

@@ -96,7 +96,13 @@ def make_grid(size, fc=0, bc=255, k=8):
     return img
 
 def grid(img):
-    assert img.ndim == 2
+    bytes_type = isinstance(img, bytes)
+    if bytes_type:
+        if not is_img_data(img): return img
+        img = cv2.imdecode(np.frombuffer(img, np.uint8), 
+                           cv2.IMREAD_GRAYSCALE)
+        if img is None: return None
+    img = ensure_grayscale(img)
 
     patterns = [
         make_grid([4, 4], fc=255, bc=0, k=k) 
@@ -113,21 +119,12 @@ def grid(img):
     for idx, pt in zip(idcs, patterns):
         idxm4 = (idx[0] % 4, idx[1] % 4)
         img[idx] = pt[idxm4]
-    
+
+    if bytes_type:
+        img = bytes(cv2.imencode('.png', img, IMWRITE_PNG_BW_FLAG)[1])
     return img
 
-def grid_bts(img):
-    if not is_img_data(img): return img
-    img = conv2png(img)
-    img = np.frombuffer(img, np.uint8)
-    img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
-    if img is None: return None
-    img = grid(img).astype(np.uint8)
-    img = cv2.imencode(
-        '.png', img, 
-        [cv2.IMWRITE_PNG_BILEVEL, 1]
-    )[1]
-    return bytes(img)
+grid_bts = grid
 
 '''
 def noise(img):
@@ -159,25 +156,22 @@ def noise_bts(img):
 '''
 
 def noise(img):
-    assert img.ndim == 2
+    bytes_type = isinstance(img, bytes)
+    if bytes_type:
+        if not is_img_data(img): return img
+        img = cv2.imdecode(np.frombuffer(img, np.uint8), 
+                           cv2.IMREAD_GRAYSCALE)
+        if img is None: return None
+    img = ensure_grayscale(img)
 
     r = np.random.randint(255, size=img.shape)
     img = np.where(r < img, 255, 0)
+    
+    if bytes_type:
+        img = bytes(cv2.imencode('.png', img, IMWRITE_PNG_BW_FLAG)[1])
     return img
 
-def noise_bts(img):
-    if not is_img_data(img): return img
-    img = conv2png(img)
-    img = np.frombuffer(img, np.uint8)
-    img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
-    if img is None: return None
-    img = noise(img).astype(np.uint8)
-    img = cv2.imencode(
-        '.png', img, 
-        [cv2.IMWRITE_PNG_BILEVEL, 1]
-    )[1]
-    return bytes(img)
-
+noise_bts = noise
 noisebw = noise
 noisebw_bts = noise_bts
 

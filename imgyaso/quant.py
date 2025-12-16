@@ -2,23 +2,18 @@ import sys
 import cv2
 import libimagequant as liq
 from PIL import Image, ImageFile
+import numpy as np
 from io import BytesIO
 from .util import *
 import numpy as np
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def pngquant(img, ncolors=8):
-    img = cv2.imencode(
-        '.png', img, 
-        [cv2.IMWRITE_PNG_COMPRESSION, 9]
-    )[1]
-    img = bytes(img)
-    img = pngquant_bts(img, ncolors)
-    img = np.frombuffer(img, np.uint8)
-    return cv2.imdecode(img, cv2.IMREAD_UNCHANGED)
-
 def pngquant_bts(img, ncolors=8):
+    nparr_fmt = isinstance(img, np.ndarray)
+    if nparr_fmt:
+        img = bytes(cv2.imencode('.png', img, IMWRITE_PNG_FLAG)[1])
+
     if not is_img_data(img): return img
     img = conv2png(img)
     img = Image.open(BytesIO(img)).convert('RGBA')
@@ -45,7 +40,13 @@ def pngquant_bts(img, ncolors=8):
     
     bio = BytesIO()
     img.save(bio, 'PNG', optimize=True)
-    return bio.getvalue()
+    img = bio.getvalue()
+    
+    if nparr_fmt:
+        img = cv2.imdecode(np.frombuffer(img, np.uint8), cv2.IMREAD_UNCHANGED)
+    return img
+
+pngquant = pngquant_bts
 
 def main():
     fname = sys.argv[1]
