@@ -6,6 +6,7 @@ from os import path
 from PIL import Image, ImageFile
 from io import BytesIO
 import numpy as np
+import cv2
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 IMWRITE_PNG_FLAG = [cv2.IMWRITE_PNG_COMPRESSION, 9]
