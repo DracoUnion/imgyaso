@@ -22,7 +22,7 @@ pts = [
     [1, 0],
     [3, 2],
     [1, 2],
-    [3, 1], # 16/16
+    [3, 0], # 16/16
 ]
 
 '''
@@ -103,9 +103,7 @@ def grid(img):
         for k in range(nclr)
     ]
 
-    clrs = np.linspace(0, 255, nclr).astype(int)
-    delims = (clrs[1:] + clrs[:-1]) // 2
-    delims = np.asarray([0, *delims, 256])
+    delims = np.linspace(0, 256, nclr + 1)
     idcs = [
         np.where((img >= st) & (img < ed)) 
         for st, ed in zip(delims[:-1], delims[1:])
