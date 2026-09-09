@@ -8,6 +8,7 @@ from io import BytesIO
 import numpy as np
 import cv2
 
+Image.MAX_IMAGE_PIXELS = None
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 IMWRITE_PNG_FLAG = [cv2.IMWRITE_PNG_COMPRESSION, 9]
 IMWRITE_PNG_BW_FLAG = [cv2.IMWRITE_PNG_BILEVEL, 1]
