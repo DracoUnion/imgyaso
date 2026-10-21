@@ -18,17 +18,17 @@ def pngquant_bts(img, ncolors=8):
     img = conv2png(img)
     img = Image.open(BytesIO(img)).convert('RGBA')
     w, h = img.width, img.height
-    bytes = img.tobytes()
+    bytes_ = img.tobytes()
     
     attr = liq.Attr()
     attr.max_colors = ncolors
-    img = attr.create_rgba(bytes, w, h, 0)
+    img = attr.create_rgba(bytes_, w, h, 0)
     res = img.quantize(attr)
     res.dithering_level = 1.0
-    bytes = res.remap_image(img)
+    bytes_ = res.remap_image(img)
     palette = res.get_palette()
     
-    img = Image.frombytes('P', (w, h), bytes)
+    img = Image.frombytes('P', (w, h), bytes_)
     
     palette_data = []
     for color in palette:
