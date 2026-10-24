@@ -5,12 +5,13 @@ import re
 import os
 from os import path
 import sys
+from typing import Union
 from .util import *
 
 def adathreas_quant(
-    img: np.ndarray | bytes, 
+    img: Union[np.ndarray, bytes], 
     ncolor=8, win=9, beta=0.9
-) -> np.ndarray | bytes:
+) -> Union[np.ndarray, bytes]:
     assert ncolor <= 256, f"颜色数 {ncolor} 不应超过 256"
     bytes_type = isinstance(img, bytes)
     if bytes_type:
@@ -63,12 +64,9 @@ def cv2_imgencode_palette(img: np.ndarray) -> bytes:
     flat = rgb.reshape(-1, 3)
 
     # 找唯一颜色
-    colors, idcs = np.unique(flat, axis=0, return_inverse=True)
-    n = len(colors)
+    palette, idcs = np.unique(flat, axis=0, return_inverse=True)
+    n = len(palette)
     assert n <= 256, f"颜色数 {n} 不应超过 256"
-    # 构造 palette (768 bytes)
-    palette = np.zeros((256, 3), dtype=np.uint8)
-    palette[:n] = colors
     # 索引图
     idcs = idcs.reshape(h, w).astype(np.uint8)
 
@@ -76,13 +74,13 @@ def cv2_imgencode_palette(img: np.ndarray) -> bytes:
     img_p = Image.fromarray(idcs, mode='P')
     img_p.putpalette(palette.flatten().tolist())
     bio = BytesIO()
-    img_p.save(bio, format='PNG', optimize=True)
+    img_p.save(bio, format='PNG', optimize=True, compress_level=9)
     return bio.getvalue()
 
 def adathres(
-    img: np.ndarray | bytes, 
+    img: Union[np.ndarray, bytes], 
     win=9, beta=0.9
-) -> np.ndarray | bytes:
+) -> Union[np.ndarray, bytes]:
     bytes_type = isinstance(img, bytes)
     if bytes_type:
         if not is_img_data(img): return img
