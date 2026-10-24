@@ -2,7 +2,7 @@ import argparse
 import re
 from os import path
 from . import __version__
-from .adathres import adathres_bts
+from .adathres import adathres_bts, adathreas_color
 from .dither import grid_bts, noise_bts, noisebw_bts
 from .quant import pngquant_bts
 from .trunc import trunc_bts

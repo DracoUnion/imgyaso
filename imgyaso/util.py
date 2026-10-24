@@ -41,3 +41,7 @@ def conv2png(img):
 def ensure_grayscale(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) \
            if img.ndim == 3 else img
+
+def ensure_bgr(img):
+    return cv2.cvtColor(img, cv2.COLOR_GRAY2BGR) \
+           if img.ndim == 2 else img
