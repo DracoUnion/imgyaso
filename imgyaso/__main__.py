@@ -11,7 +11,11 @@ import copy
 import traceback
 from .util import *
 
-modes = ['quant', 'grid', 'noise', 'noisebw', 'trunc', 'thres']
+modes = [
+    'quant', 'grid', 'noise', 
+    'noisebw', 'trunc', 'thres',
+    'thresquant',
+]
 
 is_img = lambda s: re.search(r'\.(jpg|jpeg|gif|png|bmp|webp|tiff)$', s)
 
@@ -44,6 +48,8 @@ def process_file(args):
         img = pngquant_bts(img, args.colors)
     elif args.mode == 'thres':
         img = adathres_bts(img)
+    elif args.mode == 'thresquant':
+        img = adathreas_color(img, args.colors)
     if not img:
         print('fail to process')
         return
