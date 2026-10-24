@@ -36,8 +36,8 @@ def adathreas_quant(img, ncolor=8, win=9, beta=0.9):
 
 
     # 6) 用簇中心替换 HS，然后还原 uint8（注意 H 上界是 179）
-    H_quant = centers[labels, 0].reshape(H.shape)
-    S_quant = centers[labels, 1].reshape(S.shape)
+    H_quant = centers[labels, 0].reshape(H_norm.shape)
+    S_quant = centers[labels, 1].reshape(S_norm.shape)
     H_quant = np.clip(H_quant * 180.0, 0, 179).round().astype(np.uint8)
     S_quant = np.clip(S_quant * 255.0, 0, 255).round().astype(np.uint8)
 
