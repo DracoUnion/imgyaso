@@ -7,7 +7,11 @@ from os import path
 import sys
 from .util import *
 
-def adathreas_quant(img, ncolor=8, win=9, beta=0.9):
+def adathreas_quant(
+    img: np.ndarray | bytes, 
+    ncolor=8, win=9, beta=0.9
+) -> np.ndarray | bytes:
+    assert ncolor <= 256, f"颜色数 {ncolor} 不应超过 256"
     bytes_type = isinstance(img, bytes)
     if bytes_type:
         if not is_img_data(img): return img
@@ -50,13 +54,35 @@ def adathreas_quant(img, ncolor=8, win=9, beta=0.9):
     # 8) HSV -> BGR
     img_quant = cv2.cvtColor(hsv_quant, cv2.COLOR_HSV2BGR)
     if bytes_type:
-        img_quant = bytes(cv2.imencode(
-            '.png', img_quant,
-            [cv2.IMWRITE_PNG_COMPRESSION, 9],
-        )[1])
+        img_quant = cv2_imgencode_palette(img_quant)
     return img_quant
 
-def adathres(img, win=9, beta=0.9):
+def cv2_imgencode_palette(img: np.ndarray) -> bytes:
+    rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    h, w, _ = rgb.shape
+    flat = rgb.reshape(-1, 3)
+
+    # 找唯一颜色
+    colors, idcs = np.unique(flat, axis=0, return_inverse=True)
+    n = len(colors)
+    assert n <= 256, f"颜色数 {n} 不应超过 256"
+    # 构造 palette (768 bytes)
+    palette = np.zeros((256, 3), dtype=np.uint8)
+    palette[:n] = colors
+    # 索引图
+    idcs = idcs.reshape(h, w).astype(np.uint8)
+
+    # PIL 保存
+    img_p = Image.fromarray(idcs, mode='P')
+    img_p.putpalette(palette.flatten().tolist())
+    bio = BytesIO()
+    img_p.save(bio, format='PNG', optimize=True)
+    return bio.getvalue()
+
+def adathres(
+    img: np.ndarray | bytes, 
+    win=9, beta=0.9
+) -> np.ndarray | bytes:
     bytes_type = isinstance(img, bytes)
     if bytes_type:
         if not is_img_data(img): return img
