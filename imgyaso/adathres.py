@@ -31,7 +31,7 @@ def adathreas_quant(img, ncolor=8, win=9, beta=0.9):
         np.stack([H_norm.ravel(), S_norm.ravel()], axis=1), dtype=np.float32)
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 1e-4)
     _, labels, centers = cv2.kmeans(
-        HS_norm, ncolor, None, criteria, 10, cv2.KMEANS_PP_CENTERS)
+        HS_norm, ncolor, None, criteria, 1, cv2.KMEANS_PP_CENTERS)
     labels = labels.ravel()
 
 
