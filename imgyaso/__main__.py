@@ -2,7 +2,7 @@ import argparse
 import re
 from os import path
 from . import __version__
-from .adathres import adathres_bts, adathreas_color
+from .adathres import adathres_bts, adathreas_quant
 from .dither import grid_bts, noise_bts, noisebw_bts
 from .quant import pngquant_bts
 from .trunc import trunc_bts
@@ -49,7 +49,7 @@ def process_file(args):
     elif args.mode == 'thres':
         img = adathres_bts(img)
     elif args.mode == 'thresquant':
-        img = adathreas_color(img, args.colors)
+        img = adathreas_quant(img, args.colors)
     if not img:
         print('fail to process')
         return

@@ -7,7 +7,7 @@ from os import path
 import sys
 from .util import *
 
-def adathreas_color(img, ncolor=8, win=9, beta=0.9):
+def adathreas_quant(img, ncolor=8, win=9, beta=0.9):
     bytes_type = isinstance(img, bytes)
     if bytes_type:
         if not is_img_data(img): return img
